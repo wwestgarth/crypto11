@@ -247,6 +247,9 @@ type Config struct {
 	// LoginNotSupported should be set to true for tokens that do not support logging in.
 	LoginNotSupported bool
 
+	//LoginAsSecurityOfficer set to true to login as CKU_SO instead of CKU_USER
+	LoginAsSecurityOfficer bool
+
 	// UseGCMIVFromHSM should be set to true for tokens such as CloudHSM, which ignore the supplied IV for
 	// GCM mode and generate their own. In this case, the token will write the IV used into the CK_GCM_PARAMS.
 	// If UseGCMIVFromHSM is true, we will copy this IV and overwrite the 'nonce' slice passed to Seal and Open. It
@@ -361,7 +364,13 @@ func Configure(config *Config) (*Context, error) {
 	if !config.LoginNotSupported {
 		// Try to log in our persistent session. This may fail with CKR_USER_ALREADY_LOGGED_IN if another instance
 		// already exists.
-		err = instance.ctx.Login(instance.persistentSession, pkcs11.CKU_USER, instance.cfg.Pin)
+
+		userType := pkcs11.CKU_USER
+		if instance.cfg.LoginAsSecurityOfficer {
+			userType = pkcs11.CKU_SO
+		}
+
+		err = instance.ctx.Login(instance.persistentSession, userType, instance.cfg.Pin)
 		if err != nil {
 
 			pErr, isP11Error := err.(pkcs11.Error)
