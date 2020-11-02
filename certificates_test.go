@@ -31,6 +31,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/miekg/pkcs11"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -128,6 +129,55 @@ func TestCertificateRequiredArgs(t *testing.T) {
 
 	err = ctx.ImportCertificateWithLabel(val, val, nil)
 	require.Error(t, err)
+}
+
+func TestTrustedCertificate(t *testing.T) {
+	skipTest(t, skipTestCert)
+	skipTest(t, skipTestSecurityOfficer)
+
+	// This is also checks that the config allows logging in as CKU_SO
+	cfg, err := getConfig("config")
+	require.NoError(t, err)
+	cfg.LoginAsSecurityOfficer = true
+
+	ctx, err := Configure(cfg)
+	require.NoError(t, err)
+
+	cert := generateRandomCert(t)
+
+	template := NewAttributeSet()
+	err = template.Set(CkaTrusted, true)
+	require.NoError(t, err)
+
+	err = ctx.ImportCertificateWithAttributes(template, cert)
+	require.NoError(t, err)
+
+}
+
+func TestTrustedCertificateNotSO(t *testing.T) {
+
+	// This is also checks that the config allows logging in as CKU_SO
+	cfg, err := getConfig("config")
+	require.NoError(t, err)
+	cfg.LoginAsSecurityOfficer = false
+
+	ctx, err := Configure(cfg)
+	require.NoError(t, err)
+
+	cert := generateRandomCert(t)
+
+	template := NewAttributeSet()
+	err = template.Set(CkaTrusted, true)
+	require.NoError(t, err)
+
+	err = ctx.ImportCertificateWithAttributes(template, cert)
+	require.Error(t, err)
+
+	p11Err, ok := err.(pkcs11.Error)
+	require.True(t, ok)
+
+	assert.Equal(t, pkcs11.Error(pkcs11.CKR_USER_NOT_LOGGED_IN), p11Err)
+
 }
 
 func generateRandomCert(t *testing.T) *x509.Certificate {

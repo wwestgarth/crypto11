@@ -10,6 +10,7 @@ const skipTestEnv = "CRYPTO11_SKIP"
 const skipTestCert = "CERTS"
 const skipTestOAEPLabel = "OAEP_LABEL"
 const skipTestDSA = "DSA"
+const skipTestSecurityOfficer = "SECURITY_OFFICER"
 
 // skipTest tests whether the CRYPTO11_SKIP environment variable contains
 // flagName. If so, it skips the test.
