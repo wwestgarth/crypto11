@@ -263,6 +263,7 @@ type Config struct {
 	GCMIVFromHSMControl GCMIVFromHSMConfig
 }
 
+//GCMIVFromHSMConfig control struct for non-null IVs during encyrpt/decrypt
 type GCMIVFromHSMConfig struct {
 
 	// SupplyIvForHSMGCM_encrypt controls the supply of a non-nil IV for GCM use during C_EncryptInit

@@ -24,6 +24,7 @@ package crypto11
 import (
 	"crypto"
 	"crypto/x509"
+
 	"github.com/miekg/pkcs11"
 	"github.com/pkg/errors"
 )
@@ -495,7 +496,7 @@ func (c *Context) FindKeysWithAttributes(attributes AttributeSet) ([]*SecretKey,
 	return keys, nil
 }
 
-// FindAllKeyPairs retrieves all existing symmetric keys, or a nil slice if none can be found.
+//FindAllKeys retrieves all existing symmetric keys, or a nil slice if none can be found.
 func (c *Context) FindAllKeys() ([]*SecretKey, error) {
 	if c.closed.Get() {
 		return nil, errClosed

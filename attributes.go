@@ -1,7 +1,6 @@
 package crypto11
 
 import (
-	"errors"
 	"fmt"
 	"strings"
 
@@ -153,7 +152,7 @@ func NewAttribute(attributeType AttributeType, value interface{}) (a *Attribute,
 	// catch any panics from the pkcs11.NewAttribute() call to handle the error cleanly
 	defer func() {
 		if r := recover(); r != nil {
-			err = errors.New(fmt.Sprintf("failed creating Attribute: %v", r))
+			err = fmt.Errorf("failed creating Attribute: %v", r)
 		}
 	}()
 

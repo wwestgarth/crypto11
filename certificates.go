@@ -122,6 +122,7 @@ func (c *Context) FindCertificate(id []byte, label []byte, serial *big.Int) (*x5
 	return cert, err
 }
 
+//FindAllPairedCertificates retrieves all certificates paired with a key-pair
 func (c *Context) FindAllPairedCertificates() (certificates []tls.Certificate, err error) {
 	if c.closed.Get() {
 		return nil, errClosed
